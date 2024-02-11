@@ -1,9 +1,29 @@
 from graphviz import Digraph
 from typedb.common.transitivity import Transitivity
 from typedb.driver import TypeDB, SessionType, TransactionType
+import argparse
 
-DB_NAME = "test"
 count = 0
+
+parser = argparse.ArgumentParser(description='Produces a visualisation of the schema of a TypeDB database.')
+parser.add_argument('-o', dest='output', default="png",
+                    help='set the output format. PNG is the default.')
+parser.add_argument('-f', dest='filename', default="hierarchy_diagram",
+                    help='set the filename for the output. hierarchy_diagram is the default')
+parser.add_argument('-d', dest='database', default="test",
+                    help='set the database name. test is the default.')
+parser.add_argument('-s', dest='server_addr', default="127.0.0.1:1729",
+                    help='set the TypeDB server address. 127.0.0.1:1729 is the default.')
+parser.add_argument('-c', dest='edition', default="core",
+                    help='set the TypeDB edition. Core is the default.')
+args = parser.parse_args()
+output_format = args.output.lower()
+DB_NAME = args.database
+print("Format: ", output_format)
+print("Filename: ", args.filename)
+print("Database: ", args.database)
+print("Server address: ", args.server_addr)
+print("TypeDB server edition: ", args.edition)
 
 
 def label():
@@ -51,7 +71,7 @@ with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
 # todo Rewrite the code for readability
 
 # Save the diagram as a PNG file
-filename = "hierarchy_diagram"
+filename = args.filename
 output_path = './' + filename
 print(f"Saving diagram to file: {filename}")
 dot.render(output_path, format='png', cleanup=True)
