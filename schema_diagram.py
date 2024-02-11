@@ -54,7 +54,6 @@ def query_data(server, database):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Produces a visualisation of the schema of a TypeDB database.')
-    # Define a list of argument configurations
     arg_configs = [
         ('-o', 'output', 'png', 'set the output format. PNG is the default.'),
         ('-f', 'filename', 'hierarchy_diagram', 'set the filename for the output. hierarchy_diagram is the default'),
@@ -62,22 +61,22 @@ if __name__ == "__main__":
         ('-s', 'server_addr', '127.0.0.1:1729', 'set the TypeDB server address. 127.0.0.1:1729 is the default.'),
         ('-c', 'edition', 'core', 'set the TypeDB edition. Core is the default.'),
     ]
-    # Loop through the argument configurations and add them to the parser
-    for short_opt, dest, default, help_text in arg_configs:
+    for short_opt, dest, default, help_text in arg_configs:  # Add arguments to the parser
         parser.add_argument(short_opt, dest=dest, default=default, help=help_text)
     args = parser.parse_args()
+    args.output = args.output.lower()
+    args.edition = args.edition.lower()
 
-    # Print arguments
-    # for attr in ['output', 'filename', 'database', 'server_addr', 'edition']:
-    #    print(f"{attr.replace('_', ' ').capitalize()}: {getattr(args, attr)}")
-
-    # count = 0
     # Get data and construct the diagram
     diagram = query_data(args.server_addr, args.database)
+
     # Save the diagram
     match args.output:
         case "png":
             diagram.render('./' + args.filename, format='png', cleanup=True)
             print(f"Saved diagram to file: {args.filename}.png")
+        case "svg":
+            diagram.render('./' + args.filename, format='svg', cleanup=True)
+            print(f"Saved diagram to file: {args.filename}.svg")
         case _:
             print(f"Unrecognized output format.")
