@@ -3,27 +3,28 @@ from typedb.common.transitivity import Transitivity
 from typedb.driver import TypeDB, SessionType, TransactionType
 import argparse
 
-count = 0
-
 parser = argparse.ArgumentParser(description='Produces a visualisation of the schema of a TypeDB database.')
-parser.add_argument('-o', dest='output', default="png",
-                    help='set the output format. PNG is the default.')
-parser.add_argument('-f', dest='filename', default="hierarchy_diagram",
-                    help='set the filename for the output. hierarchy_diagram is the default')
-parser.add_argument('-d', dest='database', default="test",
-                    help='set the database name. test is the default.')
-parser.add_argument('-s', dest='server_addr', default="127.0.0.1:1729",
-                    help='set the TypeDB server address. 127.0.0.1:1729 is the default.')
-parser.add_argument('-c', dest='edition', default="core",
-                    help='set the TypeDB edition. Core is the default.')
+
+# Define a list of argument configurations
+arg_configs = [
+    ('-o', 'output', 'png', 'set the output format. PNG is the default.'),
+    ('-f', 'filename', 'hierarchy_diagram', 'set the filename for the output. hierarchy_diagram is the default'),
+    ('-d', 'database', 'test', 'set the database name. test is the default.'),
+    ('-s', 'server_addr', '127.0.0.1:1729', 'set the TypeDB server address. 127.0.0.1:1729 is the default.'),
+    ('-c', 'edition', 'core', 'set the TypeDB edition. Core is the default.'),
+]
+
+# Loop through the argument configurations and add them to the parser
+for short_opt, dest, default, help_text in arg_configs:
+    parser.add_argument(short_opt, dest=dest, default=default, help=help_text)
+
 args = parser.parse_args()
-output_format = args.output.lower()
-DB_NAME = args.database
-print("Format: ", output_format)
-print("Filename: ", args.filename)
-print("Database: ", args.database)
-print("Server address: ", args.server_addr)
-print("TypeDB server edition: ", args.edition)
+
+# Print arguments
+# for attr in ['output', 'filename', 'database', 'server_addr', 'edition']:
+#    print(f"{attr.replace('_', ' ').capitalize()}: {getattr(args, attr)}")
+
+count = 0
 
 
 def label():
@@ -42,9 +43,9 @@ def add_sub_node(d, sup_label, sub, shape):
     return d
 
 
-with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
-    print(f"Connecting to the {DB_NAME} database")
-    with client.session(DB_NAME, SessionType.DATA) as session:
+with TypeDB.core_driver(args.server_addr) as client:  # Connect to TypeDB server
+    print(f"Connecting to the {args.database} database")
+    with client.session(args.database, SessionType.DATA) as session:
         with session.transaction(TransactionType.READ) as transaction:
             print("Transaction open")
             all_entities = transaction.concepts.get_root_entity_type().get_subtypes(transaction, Transitivity.EXPLICIT)
