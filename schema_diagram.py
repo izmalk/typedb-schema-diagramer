@@ -81,7 +81,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Produces a visualisation of the schema of a TypeDB database.')
     arg_configs = [
         ('-o', 'output', 'png', 'set the output format. PNG is the default.'),
-        ('-f', 'filename', 'hierarchy_diagram', 'set the filename for the output. hierarchy_diagram is the default'),
+        ('-f', 'filename', 'schema_diagram', 'set the filename for the output. hierarchy_diagram is the default'),
         ('-d', 'database', 'test', 'set the database name. test is the default.'),
         ('-s', 'server_addr', '127.0.0.1:1729', 'set the TypeDB server address. 127.0.0.1:1729 is the default.'),
         ('-c', 'edition', 'core', 'set the TypeDB edition. Core|Cloud. Core is the default.'),
